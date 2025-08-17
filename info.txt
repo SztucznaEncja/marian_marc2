@@ -1,0 +1,22 @@
+// install depenedncies
+sudo apt update
+sudo apt install build-essential linux-headers-$(uname -r) bison flex libssl-dev libelf-dev
+
+//insert firmware
+sudo cp marc2.bit /lib/firmware
+
+// build the driver
+sudo make
+
+// insert driver
+systemctl --user stop pipewire.socket
+sudo rmmod snd_marc2
+sudo insmod ./snd-marc2.ko
+systemctl --user start pipewire.socket
+
+// play sound
+aplay -l
+aplay -D hw:X,0 audio_file.wav
+
+// debug info
+dmesg | tail -n 30
